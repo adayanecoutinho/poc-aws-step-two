@@ -35,7 +35,7 @@ public class AwsConfig {
 
 
     private AwsBasicCredentials getAwsBasicCredentials() {
-        return AwsBasicCredentials.create(this.accessKey, this.secretKey);
+        return AwsBasicCredentials.create(accessKey, secretKey);
     }
 
     @Bean

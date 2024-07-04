@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class KafkaConsumerService {
 
     private final DynamoDBService dynamoDBService;
@@ -19,7 +18,23 @@ public class KafkaConsumerService {
     @Value("${aws.sqs.queue-url}")
     private String queueName;
 
-    @KafkaListener(topics = "topicTeste", groupId = "group_teste")
+    @Value("${kafka.consumer.group-id}")
+    private final String groupId;
+
+    @Value("${kafka.consumer.topic}")
+    private final String topic;
+
+    public KafkaConsumerService(DynamoDBService
+                                dynamoDBService, SQSService sqsService,
+                                @Value("${kafka.consumer.group-id}") String groupId,
+                                @Value("${kafka.consumer.topic}") String topic) {
+        this.dynamoDBService = dynamoDBService;
+        this.sqsService = sqsService;
+        this.groupId = groupId;
+        this.topic = topic;
+    }
+
+    @KafkaListener(topics = "${kafka.consumer.topic}", groupId = "${kafka.consumer.group-id}")
     public void consume(String message) {
         log.info("Consumed message: {}", message);
         dynamoDBService.saveMessage(message);
